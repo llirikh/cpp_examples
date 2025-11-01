@@ -23,7 +23,7 @@ int main() {
     std::sort(a, a + 5, &cmp);
     print(a, a + 5);
 
-    bool (*ptr1)(int, int) = &cmp; // how to declare pointer to function
+    bool (*ptr1)(int, int) = &cmp; // How to declare pointer to function
     std::sort(a, a + 5, ptr1);
     print(a, a + 5);
 
