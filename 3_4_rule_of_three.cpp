@@ -1,4 +1,4 @@
-// 3.3.2. Contructors and destructors. String.
+// 3.4. Assignment operator. Rule of three.
 
 #include <iostream>
 
@@ -9,6 +9,8 @@ class String {
     String(size_t n, char c);
     String(std::initializer_list<char> list);  // Get it with value, but not with reference because of it's easy type
     String(const String& other);               // Copy Contructor
+
+    String& operator=(String other);    // Assignment operator
 
     ~String();
   
@@ -22,6 +24,8 @@ class String {
 
         std::cout << "Delegated constructor has been called! -> ";
     }
+
+    void swap(String& other);
 };
 
 // String::String() {
@@ -44,7 +48,43 @@ String::String(const String& other): String(other.sz) {
     std::copy(other.arr, other.arr + sz, arr);
 
     std::cout << "Copy constructor has been called!" << std::endl;
-} 
+}
+
+
+// String& String::operator=(const String& other) {  // Too complex: it's better to use Copy and Swap Idiom
+//     if (this == &other) return *this;             // to make this ability: str = str
+
+//     delete[] arr;
+
+//     sz = other.sz;
+//     cap = other.cap;
+//     arr = new char[other.cap];
+//     std::copy(other.arr, other.arr + sz, arr);
+
+//     return *this;
+// }
+
+// String& String::operator=(const String& other) {  // It can be shortened
+//     String copy = other;
+//     swap(copy);
+//     return *this;
+// }
+
+String& String::operator=(String other) {  // Copy and Swap: it's good)
+    swap(other);
+
+    std::cout << "String has been copied!" << std::endl;
+
+    return *this;
+}
+
+void String::swap(String& other) {         // Swap method for Copy and Swap
+    std::swap(arr, other.arr);
+    std::swap(sz, other.sz);
+    std::swap(cap, other.cap);
+
+    std::cout << "Swap method has been called!" << std::endl;
+}
 
 String::~String() {
     delete[] arr;
@@ -64,13 +104,24 @@ int main() {
     std::cout << "4: ";
     String s4 = {'a', 'b', 'c', 'd'};
 
-    // s4.~String();  // UB: double-free because desctrutor will be cakked automatically in the end of this scope
+    // s4.~String();                  // UB: double-free because desctrutor will be cakked automatically in the end of this scope
 
-    // String s5 = s4; // UB: double-free, because of default copy constructor
+    std::cout << "5: ";
+    // String s5 = s4;                // UB: double-free, because of default copy constructor
+    std::cout << std::endl;
 
     std::cout << "6: ";
     String s6 = s4;
 
     std::cout << "7: ";
-    String s7 = s7; // UB: copy contructor will copy uninitialized fields of other string
+    // String s7 = s7;               // UB: copy contructor will copy uninitialized fields of other string
+    std::cout << std::endl;
+    
+    std::cout << "8: ";
+    // s6 = s3;                      // UB: double-free, because of default assignment constructor
+    std::cout << std::endl;
+
+    std::cout << "9: ";
+    s6 = s3;
+
 }
