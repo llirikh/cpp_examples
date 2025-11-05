@@ -18,7 +18,74 @@ jobs:
         run: echo "Install all dependencies"
     
       - name: Extract task name from branch
+        id: task_info
         run: |
           BRANCH_NAME="${GITHUB_REF#refs/heads/}"
           echo "Branch name: $BRANCH_NAME"
-        
+
+          if [[ "$BRANCH_NAME" =~ ^tasks/(.+)$ ]]; then
+            TASK_NAME="${BASH_REMATCH[1]}"
+            echo "task_name=$TASK_NAME" >> $GITHUB_OUTPUT
+            echo "Detected task: $TASK_NAME"
+          else
+            echo "Error: Branch name doesn't match pattern 'tasks/<task_name>'"
+            exit 1
+          fi
+      
+      - name: Check if test scripts exists
+        id: check_test
+        run: |
+          TASK_NAME="${{ steps.task_info.outputs.task_name }}"
+          TEST_SCRIPT="./tasks/tests/${TASK_NAME}/test.sh"
+          
+          if [[ -f "$TEST_SCRIPT" ]]; then
+            echo "Test script found: $TEST_SCRIPT"
+            echo "exists=true" >> $GITHUB_OUTPUT
+          else
+            echo "Warning: Test script not found at $TEST_SCRIPT"
+            echo "exists=false" >> $GITHUB_OUTPUT
+          fi
+      
+      - name: Run tests
+        if: steps.check_test.outputs.exists == 'true'
+        run: |
+          TASK_NAME="${{ steps.task_info.outputs.task_name }}"
+          TASK_DIR="./tasks/${TASK_NAME}"
+          TEST_DIR="./tasks/tests/${TASK_NAME}"
+          
+          echo "Running tests for task: $TASK_NAME"
+          echo "Task directory: $TASK_DIR"
+          echo "Test directory: $TEST_DIR"
+          
+          cd "$TEST_DIR"
+          cp -a ../../${TASK_NAME}/. .
+          cp ../valgrind_parser.py .
+          
+          chmod +x test.sh
+          ./test.sh "$TASK_NAME"
+      
+      - name: Upload test artifacts on failure
+        if: failure()
+        uses: actions/upload-artifact@v4
+        with:
+          name: test-artifacts-${{ steps.task_info.outputs.task_name }}
+          path: |
+            tasks/tests/${{ steps.task_info.outputs.task_name }}/*.log
+            tasks/tests/${{ steps.task_info.outputs.task_name }}/diff
+            tasks/tests/${{ steps.task_info.outputs.task_name }}/*.out
+          retention-days: 7
+          if-no-files-found: ignore
+      
+      - name: Test summary
+        if: always()
+        run: |
+          TASK_NAME="${{ steps.task_info.outputs.task_name }}"
+          echo "### Test Results for task: $TASK_NAME" >> $GITHUB_STEP_SUMMARY
+          
+          if [[ "${{ job.status }}" == "success" ]]; then
+            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
+            echo "Вы потрясающие! 🎉" >> $GITHUB_STEP_SUMMARY
+          else
+            echo "❌ Tests failed" >> $GITHUB_STEP_SUMMARY
+            echo "Check the logs for details" >> $GITHUB_STEP_SUMMARY
+          fi
