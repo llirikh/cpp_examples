@@ -1,2 +1,7 @@
 .vscode/
-tasks/
+tmp/
+
+examples/*.ii
+examples/*.s
+examples/*.o
+examples/*.out
