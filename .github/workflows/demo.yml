@@ -6,3 +6,8 @@ jobs:
     steps:
       - name: Print to console
         run: echo Hello GitHub Actions!
+      - name: Print a few lines
+        run: |
+          echo Fisrt line!
+          echo Second line!
+          echo Third line!
