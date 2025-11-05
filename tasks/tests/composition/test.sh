@@ -25,7 +25,7 @@ echo "clang-format achieved"
 echo "Начинаем билдить"
 
 echo "Build with clang"
-clang++-13 -std=c++20 -pedantic -Werror -Wextra -fsanitize=address -fsanitize=undefined composition.cpp -o main.out
+clang++ -std=c++20 -pedantic -Werror -Wextra -fsanitize=address -fsanitize=undefined composition.cpp -o main.out
 if [[ ! -s main.out ]]
 then 
   echo "Пранк clang'ом не пройден"
@@ -47,7 +47,7 @@ echo "Clang tests achieved"
 
 
 echo "Build with g++"
-g++-11 -std=c++20 -pedantic -Werror -Wextra -fsanitize=address -fsanitize=undefined composition.cpp -o main.out
+g++ -std=c++20 -pedantic -Werror -Wextra -fsanitize=address -fsanitize=undefined composition.cpp -o main.out
 if [[ ! -s main.out ]]
 then 
   echo "Пранк g++ не пройден"
