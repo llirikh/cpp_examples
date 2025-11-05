@@ -15,7 +15,9 @@ jobs:
           fetch-depth: 0
       
       - name: Install dependencies
-        run: echo "Install all dependencies"
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y clang clang-tidy clang-format g++ valgrind python3
     
       - name: Extract task name from branch
         id: task_info
