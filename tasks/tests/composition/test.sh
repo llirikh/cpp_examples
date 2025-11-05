@@ -80,4 +80,4 @@ then
 fi
 echo "Valgrind achieved"
 
-echo "Вы потрясающие!"
+echo "Вы потрясающие! ^)"
