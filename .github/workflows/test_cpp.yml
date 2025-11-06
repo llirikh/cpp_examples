@@ -23,6 +23,8 @@ jobs:
         id: task_info
         run: |
           BRANCH_NAME="${GITHUB_REF#refs/heads/}"
+
+          echo "################################################################"
           echo "Branch name: $BRANCH_NAME"
 
           if [[ "$BRANCH_NAME" =~ ^tasks/(.+)$ ]]; then
@@ -33,6 +35,7 @@ jobs:
             echo "Error: Branch name doesn't match pattern 'tasks/<task_name>'"
             exit 1
           fi
+          echo "################################################################"
       
       - name: Check if test scripts exists
         id: check_test
@@ -40,6 +43,7 @@ jobs:
           TASK_NAME="${{ steps.task_info.outputs.task_name }}"
           TEST_SCRIPT="./tasks/tests/${TASK_NAME}/test.sh"
           
+          echo "################################################################"
           if [[ -f "$TEST_SCRIPT" ]]; then
             echo "Test script found: $TEST_SCRIPT"
             echo "exists=true" >> $GITHUB_OUTPUT
@@ -47,6 +51,7 @@ jobs:
             echo "Warning: Test script not found at $TEST_SCRIPT"
             echo "exists=false" >> $GITHUB_OUTPUT
           fi
+          echo "################################################################"
       
       - name: Run tests
         if: steps.check_test.outputs.exists == 'true'
@@ -55,9 +60,11 @@ jobs:
           TASK_DIR="./tasks/${TASK_NAME}"
           TEST_DIR="./tasks/tests/${TASK_NAME}"
           
+          echo "################################################################"
           echo "Running tests for task: $TASK_NAME"
           echo "Task directory: $TASK_DIR"
           echo "Test directory: $TEST_DIR"
+          echo "################################################################"
           
           cd "$TEST_DIR"
           cp -a ../../${TASK_NAME}/. .
@@ -82,12 +89,11 @@ jobs:
         if: always()
         run: |
           TASK_NAME="${{ steps.task_info.outputs.task_name }}"
-          echo "### Test Results for task: $TASK_NAME" >> $GITHUB_STEP_SUMMARY
+          echo "### Test results for task: $TASK_NAME" >> $GITHUB_STEP_SUMMARY
           
           if [[ "${{ job.status }}" == "success" ]]; then
-            echo "✅ All tests passed!" >> $GITHUB_STEP_SUMMARY
-            echo "Вы потрясающие! 🎉" >> $GITHUB_STEP_SUMMARY
+            echo "All tests passed!" >> $GITHUB_STEP_SUMMARY
           else
-            echo "❌ Tests failed" >> $GITHUB_STEP_SUMMARY
+            echo "Tests failed" >> $GITHUB_STEP_SUMMARY
             echo "Check the logs for details" >> $GITHUB_STEP_SUMMARY
           fi
