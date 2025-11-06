@@ -54,7 +54,7 @@ long long Solve(int argc, char** argv) {
   return ans;
 }
 
-int main(int argc, char* argv[]) { // Some changes
+int main(int argc, char* argv[]) { // Small change
   std::cout << Solve(argc, argv);
   return 0;
 }
