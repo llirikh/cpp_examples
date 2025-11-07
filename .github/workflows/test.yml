@@ -3,7 +3,7 @@ name: Test C++ Task
 on:
   push:
     branches:
-      - 'tasks/*'
+      - 'submit/*'
 
 jobs:
   test:
@@ -27,12 +27,12 @@ jobs:
           echo "################################################################"
           echo "Branch name: $BRANCH_NAME"
 
-          if [[ "$BRANCH_NAME" =~ ^tasks/(.+)$ ]]; then
+          if [[ "$BRANCH_NAME" =~ ^submit/(.+)$ ]]; then
             TASK_NAME="${BASH_REMATCH[1]}"
             echo "task_name=$TASK_NAME" >> $GITHUB_OUTPUT
             echo "Detected task: $TASK_NAME"
           else
-            echo "Error: Branch name doesn't match pattern 'tasks/<task_name>'"
+            echo "Error: Branch name doesn't match pattern 'submit/<task_name>'"
             exit 1
           fi
           echo "################################################################"
