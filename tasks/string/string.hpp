@@ -272,9 +272,10 @@ void String::shrink_to_fit() {
 // External Definitions
 /////////////////////////////////////////////////
 
-String operator+(String lhs, const String& rhs) {
-    lhs += rhs;
-    return lhs;
+String operator+(const String& lhs, const String& rhs) {
+    String copy = lhs;
+    copy += rhs;
+    return copy;
 }
 
 std::istream& operator>>(std::istream& istream, String& str) {
