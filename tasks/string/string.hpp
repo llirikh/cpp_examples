@@ -7,29 +7,29 @@
 class String {
   public:
     String() = default;
-    String(char);
-    String(const char*);
-    String(size_t, char);
-    String(const String&);
+    String(char symbol);
+    String(const char* other);
+    String(size_t n, char symbol);
+    String(const String& other);
     ~String();
 
-    String& operator=(String);
+    String& operator=(String other);
 
-    char& operator[](int);
-    const char& operator[](int) const;
+    char& operator[](int n);
+    const char& operator[](int n) const;
 
-    bool operator==(const String&) const;
-    bool operator!=(const String&) const;
-    bool operator>(const String&) const;
-    bool operator<(const String&) const;
-    bool operator>=(const String&) const;
-    bool operator<=(const String&) const;
+    bool operator==(const String& other) const;
+    bool operator!=(const String& other) const;
+    bool operator>(const String& other) const;
+    bool operator<(const String& other) const;
+    bool operator>=(const String& other) const;
+    bool operator<=(const String& other) const;
 
-    void push_back(char);
+    void push_back(char symbol);
     void pop_back();
 
-    String& operator+=(char);
-    String& operator+=(const String&);
+    String& operator+=(char symbol);
+    String& operator+=(const String& other);
 
     size_t length() const;
     size_t size() const;
@@ -44,10 +44,10 @@ class String {
     char* data();
     const char* data() const;
 
-    size_t find(const String&) const;
-    size_t rfind(const String&) const;
+    size_t find(const String& substr) const;
+    size_t rfind(const String& substr) const;
 
-    String substr(size_t, size_t) const;
+    String substr(size_t start, size_t count) const;
 
     bool empty() const;
 
@@ -63,15 +63,15 @@ class String {
 
     static const size_t kNpos = static_cast<size_t>(-1);
 
-    String(size_t);
+    String(size_t n);
 
-    void swap(String&);
+    void swap(String& other);
 };
 
-String operator+(String, const String&);
+String operator+(String lhs, const String& rhs);
 
-std::istream& operator>>(std::istream&, String&);
-std::ostream& operator<<(std::ostream&, const String&);
+std::istream& operator>>(std::istream& istream, String& str);
+std::ostream& operator<<(std::ostream& ostream, const String& str);
 
 
 /////////////////////////////////////////////////
@@ -92,16 +92,16 @@ void String::swap(String& other) {
 /////////////////////////////////////////////////
 // Public Definitions
 /////////////////////////////////////////////////
-String::String(char c): String(static_cast<size_t>(1)) {
-    arr_[0] = c;
+String::String(char symbol): String(static_cast<size_t>(1)) {
+    arr_[0] = symbol;
 }
 
 String::String(const char* other): String(strlen(other)) {
     std::copy(other, other + sz_, arr_);
 }
 
-String::String(size_t n, char c): String(n) {
-    std::fill(arr_, arr_ + sz_, c);
+String::String(size_t n, char symbol): String(n) {
+    std::fill(arr_, arr_ + sz_, symbol);
 }
 
 String::String(const String& other): String(other.sz_) {
@@ -153,12 +153,12 @@ bool String::operator<=(const String& other) const {
     return !(*this > other);
 }
 
-void String::push_back(char c) {
+void String::push_back(char symbol) {
     if (sz_ + 1 >= cap_) {
         String res(sz_ * 2 + 1);
         std::copy(arr_, arr_ + sz_, res.arr_);
 
-        res[sz_] = c;
+        res[sz_] = symbol;
         res.sz_ = sz_ + 1;
         res[sz_ + 1] = '\0';
 
@@ -167,7 +167,7 @@ void String::push_back(char c) {
         return;
     }
 
-    arr_[sz_] = c;
+    arr_[sz_] = symbol;
     sz_ += 1;
     arr_[sz_] = '\0';
 }
@@ -177,8 +177,8 @@ void String::pop_back() {
     arr_[sz_] = '\0';
 }
 
-String& String::operator+=(char c) {
-    push_back(c);
+String& String::operator+=(char symbol) {
+    push_back(symbol);
     return *this;
 }
 
@@ -287,17 +287,17 @@ String operator+(String lhs, const String& rhs) {
     return lhs;
 }
 
-std::istream& operator>>(std::istream& is, String& str) {
-    char c = '\0';
-    while (is.get(c)) {
-        str.push_back(c);
+std::istream& operator>>(std::istream& istream, String& str) {
+    char symbol = '\0';
+    while (istream.get(symbol)) {
+        str.push_back(symbol);
     }
 
-    return is;
+    return istream;
 }
 
-std::ostream& operator<<(std::ostream& os, const String& str) {
-    return os << str.data();
+std::ostream& operator<<(std::ostream& ostream, const String& str) {
+    return ostream << str.data();
 }
 
 
