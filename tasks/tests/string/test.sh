@@ -22,7 +22,7 @@ echo " "
 
 echo "########## Сlang-format check ##########"
 clang-format -i -style='{BasedOnStyle: Google, DerivePointerAlignment: false, PointerAlignment: Left, AlignOperands: true}' string.hpp &&
-git diff --ignore-submodules --color composition.cpp > diff &&
+git diff --ignore-submodules --color string.hpp > diff &&
 cat diff
 if [[ -s diff ]]
 then
