@@ -1,6 +1,7 @@
 #pragma once
 
 #include <algorithm>
+#include <compare>
 #include <cstring>
 #include <iostream>
 
@@ -15,15 +16,11 @@ class String {
 
     String& operator=(String other);
 
+    bool operator==(const String& other) const;
+    std::weak_ordering operator<=>(const String& other) const;
+
     char& operator[](int n);
     const char& operator[](int n) const;
-
-    bool operator==(const String& other) const;
-    bool operator!=(const String& other) const;
-    bool operator>(const String& other) const;
-    bool operator<(const String& other) const;
-    bool operator>=(const String& other) const;
-    bool operator<=(const String& other) const;
 
     void push_back(char symbol);
     void pop_back();
@@ -117,40 +114,30 @@ String& String::operator=(String other) {
     return *this;
 }
 
+bool String::operator==(const String& other) const {
+    if (sz_ != other.sz_) {
+        return false;
+    }
+    return std::strcmp(arr_, other.arr_) == 0;
+}
+
+std::weak_ordering String::operator<=>(const String& other) const {
+    int cmp = std::strcmp(arr_, other.arr_);
+    if (cmp < 0) {
+        return std::weak_ordering::less;
+    }
+    if (cmp > 0) {
+        return std::weak_ordering::greater;
+    }
+    return std::weak_ordering::equivalent;
+}
+
 char& String::operator[](int n) {
     return arr_[n];
 }
 
 const char& String::operator[](int n) const {
     return arr_[n];
-}
-
-bool String::operator==(const String& other) const {
-    if (sz_ != other.sz_) {
-        return false;
-    }
-
-    return std::strcmp(arr_, other.arr_) == 0;
-}
-
-bool String::operator!=(const String& other) const {
-    return !(*this == other);
-}
-
-bool String::operator>(const String& other) const {
-    return std::strcmp(arr_, other.arr_) > 0;
-}
-
-bool String::operator<(const String& other) const {
-    return other > *this;
-}
-
-bool String::operator>=(const String& other) const {
-    return !(other > *this);
-}
-
-bool String::operator<=(const String& other) const {
-    return !(*this > other);
 }
 
 void String::push_back(char symbol) {
@@ -281,6 +268,9 @@ void String::shrink_to_fit() {
     swap(res);
 }
 
+/////////////////////////////////////////////////
+// External Definitions
+/////////////////////////////////////////////////
 
 String operator+(String lhs, const String& rhs) {
     lhs += rhs;

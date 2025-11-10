@@ -1,0 +1,51 @@
+#include <algorithm>
+#include <compare>
+#include <cstring>
+#include <iostream>
+
+class String {
+  public:
+    String() = default;
+    String(char symbol);
+    String(const char* other);
+    String(size_t n, char symbol);
+    String(const String& other);
+    ~String();
+
+    String& operator=(String other);
+
+    bool operator==(const String& other) const;
+    bool operator<(const String& other) const;
+    std::weak_ordering operator<=>(const String& other) const = default;
+    ...
+    
+  private:
+    size_t sz_ = 0;
+    size_t cap_ = 0;
+    char* arr_ = nullptr;
+    ...
+};
+
+bool String::operator==(const String& other) const {
+    if (sz_ != other.sz_) {
+        return false;
+    }
+
+    return std::strcmp(arr_, other.arr_) == 0;
+}
+
+bool String::operator<(const String& other) const {
+    return std::strcmp(arr_, other.arr_) < 0;
+}
+
+int main() {
+  String a("abc"), b("abc"), c("abd"), d("ab");
+
+  assert(a == b);
+  assert(!(a != b));
+  assert(a < c);
+  assert(c > a);
+  assert(d < a);
+  assert(a >= b);
+  assert(a <= b);
+}
