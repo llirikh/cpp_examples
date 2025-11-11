@@ -63,6 +63,7 @@ class String {
     String(size_t n);
 
     void swap(String& other);
+    void reserve(size_t cap);
 };
 
 String operator+(const String& lhs, const String& rhs);
@@ -84,6 +85,18 @@ void String::swap(String& other) {
     std::swap(sz_, other.sz_);
     std::swap(cap_, other.cap_);
     std::swap(arr_, other.arr_);
+}
+
+void String::reserve(size_t cap) {
+    char* arr = new char[cap];
+
+    if (arr_ != nullptr) {
+        std::copy(arr_, arr_ + sz_ + 1, arr);
+        delete[] arr_;
+    }
+    
+    arr_ = arr;
+    cap_ = cap;
 }
 
 /////////////////////////////////////////////////
@@ -159,13 +172,8 @@ void String::pop_back() {
 
 String& String::operator+=(char symbol) {
     if (sz_ + 2 > cap_) {
-        size_t new_cap = (sz_ == 0 ? 1 : sz_ * 2);
-        String new_str(new_cap);
-
-        std::copy(arr_, arr_ + sz_, new_str.arr_);
-        new_str.sz_ = sz_;
-
-        swap(new_str);
+        size_t new_cap = (sz_ == 0 ? 1 : sz_ * 2 ) + 1;
+        reserve(new_cap);
     }
 
     arr_[sz_] = symbol;
@@ -177,13 +185,8 @@ String& String::operator+=(char symbol) {
 
 String& String::operator+=(const String& other) {
     if (sz_ + other.sz_ + 1 > cap_) {
-        size_t new_cap = std::max(sz_ * 2, sz_ + other.sz_);
-        String new_str(new_cap);
-
-        std::copy(arr_, arr_ + sz_, new_str.arr_);
-        new_str.sz_ = sz_;
-
-        swap(new_str);
+        size_t new_cap = std::max(sz_ * 2, sz_ + other.sz_ + 1);
+        reserve(new_cap);
     }
 
     std::copy(other.arr_, other.arr_ + other.sz_, arr_ + sz_);
