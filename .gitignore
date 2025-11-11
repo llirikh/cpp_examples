@@ -5,3 +5,6 @@ examples/*.ii
 examples/*.s
 examples/*.o
 examples/*.out
+
+tasks/*/*.out
+tasks/*/main.cpp
