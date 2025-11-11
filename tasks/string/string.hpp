@@ -119,10 +119,10 @@ bool String::operator==(const String& other) const {
         return false;
     }
 
-    if (!arr_ && !other.arr_) {
+    if (arr_ == nullptr && other.arr_ == nullptr) {
         return true;
     }
-    if (!arr_ || !other.arr_) {
+    if (arr_ == nullptr || other.arr_ == nullptr) {
         return false;
     }
 
@@ -276,7 +276,7 @@ bool String::empty() const {
 
 void String::clear() {
     sz_ = 0;
-    if (arr_) {
+    if (arr_ == nullptr) {
         arr_[sz_] = '\0';
     }
 }
@@ -300,7 +300,7 @@ String operator+(const String& lhs, const String& rhs) {
 std::istream& operator>>(std::istream& istream, String& str) {
     str.clear();
     char symbol = '\0';
-    while (istream.get(symbol) && !std::isspace(symbol)) {
+    while (istream.get(symbol) && std::isspace(symbol) == 0) {
         str += symbol;
     }
 
