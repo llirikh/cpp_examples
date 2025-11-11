@@ -158,7 +158,7 @@ void String::pop_back() {
 }
 
 String& String::operator+=(char symbol) {
-    if (sz_ + 1 > cap_) {
+    if (sz_ + 2 > cap_) {
         size_t new_cap = (sz_ == 0 ? 1 : sz_ * 2);
         String new_str(new_cap);
 
