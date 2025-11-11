@@ -65,7 +65,7 @@ class String {
     void swap(String& other);
 };
 
-String operator+(String lhs, const String& rhs);
+String operator+(const String& lhs, const String& rhs);
 
 std::istream& operator>>(std::istream& istream, String& str);
 std::ostream& operator<<(std::ostream& ostream, const String& str);
@@ -118,6 +118,14 @@ bool String::operator==(const String& other) const {
     if (sz_ != other.sz_) {
         return false;
     }
+
+    if (!arr_ && !other.arr_) {
+        return true;
+    }
+    if (!arr_ || !other.arr_) {
+        return false;
+    }
+
     return std::strcmp(arr_, other.arr_) == 0;
 }
 
@@ -141,22 +149,7 @@ const char& String::operator[](int n) const {
 }
 
 void String::push_back(char symbol) {
-    if (sz_ + 1 >= cap_) {
-        String res(sz_ * 2 + 1);
-        std::copy(arr_, arr_ + sz_, res.arr_);
-
-        res[sz_] = symbol;
-        res.sz_ = sz_ + 1;
-        res[sz_ + 1] = '\0';
-
-        swap(res);
-
-        return;
-    }
-
-    arr_[sz_] = symbol;
-    sz_ += 1;
-    arr_[sz_] = '\0';
+    *this += symbol;
 }
 
 void String::pop_back() {
@@ -165,14 +158,37 @@ void String::pop_back() {
 }
 
 String& String::operator+=(char symbol) {
-    push_back(symbol);
+    if (sz_ + 1 > cap_) {
+        size_t new_cap = (sz_ == 0 ? 1 : sz_ * 2);
+        String new_str(new_cap);
+
+        std::copy(arr_, arr_ + sz_, new_str.arr_);
+        new_str.sz_ = sz_;
+
+        swap(new_str);
+    }
+
+    arr_[sz_] = symbol;
+    sz_ += 1;
+    arr_[sz_] = '\0';
+
     return *this;
 }
 
 String& String::operator+=(const String& other) {
-    for (size_t i = 0; i != other.size(); ++i) {
-        push_back(other[i]);
+    if (sz_ + other.sz_ + 1 > cap_) {
+        size_t new_cap = std::max(sz_ * 2, sz_ + other.sz_);
+        String new_str(new_cap);
+
+        std::copy(arr_, arr_ + sz_, new_str.arr_);
+        new_str.sz_ = sz_;
+
+        swap(new_str);
     }
+
+    std::copy(other.arr_, other.arr_ + other.sz_, arr_ + sz_);
+    sz_ += other.sz_;
+
     return *this;
 }
 
@@ -260,6 +276,9 @@ bool String::empty() const {
 
 void String::clear() {
     sz_ = 0;
+    if (arr_) {
+        arr_[sz_] = '\0';
+    }
 }
 
 void String::shrink_to_fit() {
@@ -279,9 +298,10 @@ String operator+(const String& lhs, const String& rhs) {
 }
 
 std::istream& operator>>(std::istream& istream, String& str) {
+    str.clear();
     char symbol = '\0';
-    while (istream.get(symbol)) {
-        str.push_back(symbol);
+    while (istream.get(symbol) && !std::isspace(symbol)) {
+        str += symbol;
     }
 
     return istream;
