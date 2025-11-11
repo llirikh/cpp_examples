@@ -312,6 +312,9 @@ std::ostream& operator<<(std::ostream& ostream, const String& str) {
     return ostream << str.data();
 }
 
+/////////////////////////////////////////////////
+// Dev Definitions
+/////////////////////////////////////////////////
 
 void String::repr() const {
 
