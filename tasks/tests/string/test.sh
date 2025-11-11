@@ -10,7 +10,7 @@ echo " "
 
 
 echo "########## Clang-tidy check ##########"
-clang-tidy -extra-arg=-std=c++17 -quiet string.hpp
+clang-tidy -extra-arg=-std=c++20 -quiet string.hpp
 if [[ ! $? -eq 0 ]]
 then
   echo " "
