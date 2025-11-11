@@ -276,7 +276,7 @@ bool String::empty() const {
 
 void String::clear() {
     sz_ = 0;
-    if (arr_ == nullptr) {
+    if (arr_ != nullptr) {
         arr_[sz_] = '\0';
     }
 }
