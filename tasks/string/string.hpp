@@ -188,6 +188,7 @@ String& String::operator+=(const String& other) {
 
     std::copy(other.arr_, other.arr_ + other.sz_, arr_ + sz_);
     sz_ += other.sz_;
+    arr_[sz_] = '\0';
 
     return *this;
 }
